@@ -1,0 +1,21 @@
+annual_comfort_metrics = {
+{'Discomfort-weighted Exceedance OccupiedHours':{
+	'Very-cold Exceedance OccupantHours [hr]':0,
+	'Cool Exceedance OccupantHours [hr]':1,
+	'Warm Exceedance OccupantHours [hr]':2,
+	'Very-hot Exceedance OccupantHours [hr]:3'},
+'Comfort and Setpoint Not Met Summary':{
+	'Time Setpoint Not Met During Occupied Heating':4,
+	'Time Setpoint Not Met During Occupied Cooling':5},
+'Heat Index OccupiedHours':{
+	'Safe (≤ 26.7°C) [hr]':6,
+	'Caution (> 26.7°C, ≤ 32.2°C) [hr]':7,
+	'Extreme Caution (> 32.2°C, ≤ 39.4°C) [hr]':8,
+	'Danger (> 39.4°C, ≤ 51.7°C) [hr]':9,
+	'Extreme Danger (> 51.7°C) [hr]':10},
+'Unmet Degree-Hours':{
+	'Cooling Setpoint Unmet Occupied Degree-Hours [°C·hr]':11,
+	'Heating Setpoint Unmet Occupied Degree-Hours [°C·hr]':12}}
+
+
+
