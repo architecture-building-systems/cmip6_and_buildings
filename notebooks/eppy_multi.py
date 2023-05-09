@@ -11,13 +11,21 @@ from eppy.modeleditor import IDF
 from eppy.runner.run_functions import runIDFs
 from eppy.runner.run_functions import run as eplus_run
 import math
+import shutil
+
+def chunker_list(seq, size):
+    return (seq[i::size] for i in range(size))
 
 def chunk_into_n(lst, n):
-  size = math.ceil(len(lst) / n)
-  return list(
-    map(lambda x: lst[x * size:x * size + size],
-    list(range(n)))
-  )
+    chunks = chunker_list(lst,n)
+    return [list(c) for c in chunks]
+
+# def chunk_into_n(lst, n):
+#   size = math.ceil(len(lst) / n)
+#   return list(
+#     map(lambda x: lst[x * size:x * size + size],
+#     list(range(n)))
+#   )
   
 def load_idf_list(vintages, project_root):
     all_idf = []
@@ -76,7 +84,7 @@ def get_epw_name(idf_fname, scenario, year, ptile=50):
 
     if scenario == 'historical':
         epw_path = glob.glob(os.path.join(
-            project_root, 'weather_files', 'tmy3', f'{cz}*.epw'))[0]
+            project_root, 'weather_files', 'tmy3', f'{cz}_*.epw'))[0]
     else:
         year_bands = get_year_bands(year, formatted=True)
         epw_path = os.path.join(project_root, 'weather_files', 'morphed',
@@ -188,10 +196,9 @@ def inner_loop(scen_year, fnames, idd):
                     pass
                 else:
                     result_file_check.append(1)
-            if len(result_file_check)>0:
+            if sum(result_file_check)>0:
                 pass
             else:
-                print(result_dir)
                 details_list.append(details)
                 
         # else:
@@ -230,16 +237,14 @@ def build_runs(n_processes):
         inner_loop_list = inner_loop(scen_year, fnames, iddfile)
         runs_all.append(inner_loop_list)
         
-
-    num_CPUs = os.cpu_count() - 1
     runs_all  = [item for sublist in runs_all for item in sublist]
-    
-    
+
     chunks = chunk_into_n(runs_all, n_processes)
     return chunks
 
 
 def run_idf(run_details):
+    shutil.rmtree(run_details['output_directory'])
     eplus_run(idf=run_details['file_name'], 
               weather=run_details['epw_name'],
               output_directory=run_details['output_directory'], 

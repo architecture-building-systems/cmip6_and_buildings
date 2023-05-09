@@ -4,7 +4,19 @@ import glob
 import os 
 import string
 import shutil
+import math
 
+def chunker_list(seq, size):
+    return (seq[i::size] for i in range(size))
+
+def chunk_into_n(lst, n):
+    chunks = chunker_list(lst,n)
+    return [list(c) for c in chunks]
+#   size = math.ceil(len(lst) / n)
+#   return list(
+#     map(lambda x: lst[x * size:x * size + size],
+#     list(range(n)))
+#   )
 
 def get_updater_dir(eplus_dir = r"C:\EnergyPlusV22-2-0"):
     return os.path.join(eplus_dir,'PreProcess','IDFVersionUpdater')
@@ -110,3 +122,45 @@ def run_cz_conversion(input_tuple):
                     shutil.rmtree(temp_dir, ignore_errors=False, onerror=None)
     return missing_files
             
+def run_cz_conversion_patch(chunk):
+    run_files = []
+    for input_tuple in chunk:
+        run_bool, idf_fpath, temp_dir, dest_dir = input_tuple
+        src_version = "V7-2-0"
+        trgt_version = "V22-2-0"
+        updater_dict = get_updater_dict()
+        updater_dir = get_updater_dir()
+        
+        idf_fname = idf_fpath.split(os.sep)[-1].replace("v1.4_7.2",trgt_version)
+        print(f"     -{idf_fname}")
+        temp_file = os.path.join(temp_dir, idf_fname)
+        if os.path.exists(temp_file):
+            
+            pass
+        else:
+            dest_file = os.path.join(dest_dir, idf_fname)
+            if os.path.exists(dest_file):
+                
+
+                pass
+            else:
+                for new_dir in [dest_dir, temp_dir]:
+                    if os.path.exists(new_dir):
+                        pass
+                    else:
+                        os.mkdir(new_dir)
+                if run_bool == True:
+                    # copy to temp
+                    shutil.copy(idf_fpath, temp_file)
+                    
+                    # run updater
+                    wrap_updater(updater_dir, updater_dict, src_version, trgt_version, temp_file)
+
+                    # move temp to final destination and rename
+                    shutil.copy(temp_file, dest_file)
+                    
+                    # delete temp contents
+                    shutil.rmtree(temp_dir, ignore_errors=False, onerror=None)
+                    
+                run_files.append(idf_fpath)
+    return run_files
