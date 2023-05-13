@@ -1,0 +1,89 @@
+{
+    "colors": [
+        {
+            "zone": "1a",
+            "name": "Heliotrope",
+            "hex": "#d931fc"
+        },
+        {
+            "zone": "2a",
+            "name": "Scarlet",
+            "hex": "#fe2905"
+        },
+        {
+            "zone": "2b",
+            "name": "Orange",
+            "hex": "#fa5b29"
+        },
+        {
+            "zone": "3a",
+            "name": "Orange Roughy",
+            "hex": "#c55912"
+        },
+        {
+            "zone": "3b",
+            "name": "Neon Carrot",
+            "hex": "#ff9743"
+        },
+        {
+            "zone": "3bc",
+            "name": "Persian Plum",
+            "hex": "#68182B"
+        },
+        {
+            "zone": "3c",
+            "name": "Pumpkin",
+            "hex": "#ff6f12"
+        },
+        {
+            "zone": "4a",
+            "name": "Golden Fizz",
+            "hex": "#fefd32"
+        },
+        {
+            "zone": "4b",
+            "name": "Drover",
+            "hex": "#f8fca5"
+        },
+        {
+            "zone": "4c",
+            "name": "Dandelion",
+            "hex": "#fdda59"
+        },
+        {
+            "zone": "5a",
+            "name": "Forest Green",
+            "hex": "#32a02e"
+        },
+        {
+            "zone": "5b",
+            "name": "Pine Glade",
+            "hex": "#abcf8f"
+        },
+        {
+            "zone": "5c",
+            "name": "Woodland",
+            "hex": "#375723"
+        },
+        {
+            "zone": "6a",
+            "name": "Cerulean Blue",
+            "hex": "#2566ae"
+        },
+        {
+            "zone": "6b",
+            "name": "Polo Blue",
+            "hex": "#8eaada"
+        },
+        {
+            "zone": "7a",
+            "name": "Vivid Violet",
+            "hex": "#70309f"
+        },
+        {
+            "zone": "8a",
+            "name": "Dove Gray",
+            "hex": "#727272"
+        }
+    ]
+}
