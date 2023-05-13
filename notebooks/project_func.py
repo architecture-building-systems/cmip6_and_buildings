@@ -26,6 +26,15 @@ sys.path.insert(0, module_path)
 from ipv_workbench.utilities import utils
 
 
+def get_scenario_colors(category):
+    color_dict = {}
+    with open(os.path.join('input_data', 'IPCC Style Scenarios.json'), 'r') as json_file:
+        data = json.load(json_file)
+    for entry in data[category]:
+        scenario = entry['scenario']
+        color_dict[scenario] = entry['hex']
+    return color_dict
+
 def round_down(num, divisor):
     return num - (num % divisor)
 

@@ -1,0 +1,46 @@
+{
+    "colors-line": [
+        {
+            "name": "Totem Pole",
+            "scenario": "rcp8.5",
+            "hex": "#991402"
+        },
+        {
+            "name": "Meteor",
+            "scenario": "rcp6.0",
+            "hex": "#c47913"
+        },
+        {
+            "name": "Danube",
+            "scenario": "rcp4.5",
+            "hex": "#70a0cd"
+        },
+        {
+            "name": "Midnight Blue",
+            "scenario": "rcp2.6",
+            "hex": "#003466"
+        }
+    ],
+    "colors-shade": [
+        {
+            "name": "Apricot Peach",
+            "scenario": "rcp8.5",
+            "hex": "#fcd1c5"
+        },
+        {
+            "name": "Laser",
+            "scenario": "rcp6.0",
+            "hex": "#ccae71"
+        },
+        {
+            "name": "Morning Glory",
+            "scenario": "rcp4.5",
+            "hex": "#93c5de"
+        },
+        {
+            "name": "Boston Blue",
+            "scenario": "rcp2.6",
+            "hex": "#4393c3"
+        }
+    ]
+}
