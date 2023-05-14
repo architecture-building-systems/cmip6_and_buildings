@@ -83,8 +83,8 @@ def get_epw_name(idf_fname, scenario, year, ptile=50):
     cz = idf_details['climate_zone']
 
     if scenario == 'historical':
-        epw_path = glob.glob(os.path.join(
-            project_root, 'weather_files', 'tmy3', f'{cz}_*.epw'))[0]
+        epw_path = os.path.join(
+            project_root, 'weather_files', 'morphed', cz, 'historical', 'EPWs', 'baseline.epw')
     else:
         year_bands = get_year_bands(year, formatted=True)
         epw_path = os.path.join(project_root, 'weather_files', 'morphed',
@@ -169,7 +169,7 @@ def make_eplaunch_options(fname, scenario, year, idd):
     }
     return options
 
-def inner_loop(scen_year, fnames, idd):
+def inner_loop(scen_year, fnames, idd, essentials_only):
     scenario = scen_year[0]
     year = scen_year[1]
     # print("start making idf list")
@@ -199,7 +199,15 @@ def inner_loop(scen_year, fnames, idd):
             if sum(result_file_check)>0:
                 pass
             else:
-                details_list.append(details)
+                if "RefBldgMidriseApartment" in fname:
+                    details_list.append(details)
+                elif "RefBldgMediumOffice" in fname:
+                    details_list.append(details)
+                else:
+                    if essentials_only==True:
+                        pass
+                    else:
+                        details_list.append(details)
                 
         # else:
         #     for f in csv_files:
@@ -214,7 +222,7 @@ def inner_loop(scen_year, fnames, idd):
     # return (zip(idfs,details_list))
     return details_list
 
-def build_runs(n_processes):
+def build_runs(n_processes, essentials_only):
     if sys.platform == 'darwin':
         iddfile = "/Applications/EnergyPlus-22-2-0/Energy+.idd"
         project_root = "/Users/jmccarty/GitHub/cmip6_and_buildings"
@@ -227,14 +235,17 @@ def build_runs(n_processes):
     
     IDF.setiddname(iddfile)
 
-    vintages = ['pre1980','post1980', 'new']
+    if essentials_only==True:
+        vintages = ['new']
+    else:
+        vintages = ['pre1980','post1980', 'new']
     scen_years = build_scen_years()
     fnames = load_idf_list(vintages, project_root)
     
     runs_all = []
     for scen_year in scen_years:
         print(scen_year)
-        inner_loop_list = inner_loop(scen_year, fnames, iddfile)
+        inner_loop_list = inner_loop(scen_year, fnames, iddfile, essentials_only)
         runs_all.append(inner_loop_list)
         
     runs_all  = [item for sublist in runs_all for item in sublist]

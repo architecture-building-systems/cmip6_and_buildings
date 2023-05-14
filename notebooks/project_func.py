@@ -52,13 +52,13 @@ def get_year_bands(year, formatted=True):
 
 
 def get_years():
-    return [2035, 2050, 2065, 2080]
+    return [2020, 2035, 2050, 2065, 2080]
 
 def get_vintages():
     return [('new','New2004'),('post1980','Post1980'),('pre1980','Pre1980')]
 
 def get_scenarios():
-    return ['ssp126','ssp245','ssp585']
+    return ['historical','ssp126','ssp245','ssp585']
 
 def get_project_dir():
     return pathlib.Path(os.path.dirname(os.path.realpath(__file__))).parent
