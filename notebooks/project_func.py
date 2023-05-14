@@ -1,4 +1,6 @@
 
+
+import eppy_multi
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.patches import Patch
@@ -68,6 +70,23 @@ def get_cz_list():
     cz_list = ['1a', '2a', '2b', '3a', '3b', '3bc', '3c', '4a',
                '4b', '4c', '5a', '5b', '6a', '6b', '7a', '8a']
     return cz_list
+
+
+def compile_sim_code(all_dict, vintage, cz, scen_year, bldg_type):
+    return f"{all_dict['vintage'][vintage]}_{all_dict['cz'][cz]}_{all_dict['scen_year'][scen_year]}_{all_dict['bldg_type'][bldg_type]}"
+
+def reverse_sim_code(all_dict, sim_code):
+    sim_el = sim_code.split("_")
+    sim_el = [int(e) for e in sim_el]
+    vintage = all_dict['vintage_r'][sim_el[0]]
+    cz = all_dict['cz_r'][sim_el[1]]
+    
+    scen_year = all_dict['scen_year_r'][0].replace("_","-")
+    scenario = scen_year.split("-")[0]
+    year = scen_year.split("-")[1]
+    bldg_type = all_dict['bldg_type_r'][sim_el[3]]
+    
+    return f"{vintage}_{cz}_{scenario}_{year}_{bldg_type}"
 
 
 def get_color_dict():
@@ -232,3 +251,88 @@ def plot_us_map_heatmap(zones, plot_col, lgd_label, lgd=False, ax=None, lgd_kw=N
 
 def test():
     print(pathlib.Path(os.path.dirname(os.path.realpath(__file__))).parent)
+
+
+
+bldg_types = ['RefBldgFullServiceRestaurant',
+                'RefBldgHospital',
+                'RefBldgLargeHotel',
+                'RefBldgLargeOffice',
+                'RefBldgMediumOffice',
+                'RefBldgMidriseApartment',
+                'RefBldgOutPatient',
+                'RefBldgPrimarySchool',
+                'RefBldgQuickServiceRestaurant',
+                'RefBldgSecondarySchool',
+                'RefBldgSmallHotel',
+                'RefBldgSmallOffice',
+                'RefBldgStand-aloneRetail',
+                'RefBldgStripMall',
+                'RefBldgSuperMarket',
+                'RefBldgWarehouse']
+map_bldg_type = dict(zip(bldg_types,np.arange(0,len(bldg_types))))
+
+def reverse_dict(my_dict):
+    return dict(zip(my_dict.values(),my_dict.keys()))
+
+
+map_cz = dict(zip(get_cz_list(),np.arange(0,len(get_cz_list()))))
+scen_years = eppy_multi.build_scen_years()
+scen_years = [f'{a}_{b}' for a,b in eppy_multi.build_scen_years()]
+map_scen_years = dict(zip(scen_years,np.arange(0,len(scen_years))))
+vintages = ['pre1980', 'post1980', 'new']
+map_vintages = dict(zip(vintages,[0,1,2]))
+
+
+
+all_dict = {'vintage':map_vintages,
+            'vintage_r':reverse_dict(map_vintages),
+            'cz':map_cz,
+            'cz_r':reverse_dict(map_cz),
+            'scen_year':map_scen_years,
+            'scen_year_r':reverse_dict(map_scen_years),
+            'bldg_type':map_bldg_type,
+            'bldg_type_r':reverse_dict(map_bldg_type)}
+
+map_perf_metrics = {'hs_el_kwh':13,
+                    'hs_ng_kwh':14,
+                    'cs_el_kwh':15,
+                    'fan_el_kwh':16,
+                    'fac_ng_kwh':17,
+                    'fac_el_kwh':18,
+                    'geff_irrad_kwh':19, 
+                    'cell_temp_degc':20, 
+                    'pv_yield_kwh':21,
+                    'fac_el_net_kwh':22,
+                    'pv_consumed_kwh':23, 
+                    'pv_excess_kwh':24,
+                    'self_suff_pct':25,
+                    'self_consume_pct':26, 
+                    'op_em_kgco2':27, 
+                    'op_em_pv_kgco2':28, 
+                    'mit_pot_kgco2':29}
+
+tables_of_interest = ['Discomfort-weighted Exceedance OccupiedHours', 
+                      'Comfort and Setpoint Not Met Summary',
+                      'Heat Index OccupiedHours',
+                      'Unmet Degree-Hours']
+
+annual_comfort_metrics = {
+    'Discomfort-weighted Exceedance OccupiedHours':{
+	'Very-cold Exceedance OccupantHours [hr]':0,
+	'Cool Exceedance OccupantHours [hr]':1,
+	'Warm Exceedance OccupantHours [hr]':2,
+	'Very-hot Exceedance OccupantHours [hr]':3},
+'Comfort and Setpoint Not Met Summary':{
+	'Time Setpoint Not Met During Occupied Heating':4,
+	'Time Setpoint Not Met During Occupied Cooling':5},
+'Heat Index OccupiedHours':{
+	'Safe (≤ 26.7°C) [hr]':6,
+	'Caution (> 26.7°C, ≤ 32.2°C) [hr]':7,
+	'Extreme Caution (> 32.2°C, ≤ 39.4°C) [hr]':8,
+	'Danger (> 39.4°C, ≤ 51.7°C) [hr]':9,
+	'Extreme Danger (> 51.7°C) [hr]':10},
+'Unmet Degree-Hours':{
+	'Cooling Setpoint Unmet Occupied Degree-Hours [°C·hr]':11,
+	'Heating Setpoint Unmet Occupied Degree-Hours [°C·hr]':12}
+}
