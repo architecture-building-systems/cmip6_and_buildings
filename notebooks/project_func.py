@@ -1,6 +1,6 @@
 
 
-from ipv_workbench.utilities import utils
+
 import eppy_multi
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -26,6 +26,7 @@ if sys.platform == 'win32':
 else:
     module_path = "/Users/jmccarty/Data/221205_ipv_workbench/github/IPV_Workbench"
 sys.path.insert(0, module_path)
+from ipv_workbench.utilities import utils
 
 
 def get_scenario_colors(category):
@@ -40,6 +41,13 @@ def get_scenario_colors(category):
 
 def round_down(num, divisor):
     return num - (num % divisor)
+
+
+def myround(x, base=5):
+    rounded = base * round(x/base)
+    if rounded == 0:
+        rounded = base
+    return rounded
 
 
 def find_file(file_list, key):
@@ -157,7 +165,7 @@ def build_lgd(colors, labels, element_type='patch', marker='o'):
     return lgd_el
 
 
-def plot_us_map_heatmap(zones, plot_col, lgd_label, lgd=False, ax=None, lgd_kw=None, vmin=None, vmax=None, cmap='cividis', plot_points=True, save=False):
+def plot_us_map_heatmap(zones, plot_col, lgd_label, lgd=False, ax=None, lgd_kw=None, vmin=None, vmax=None, cmap='cividis', norm=None, plot_points=True, save=False):
     if lgd_kw is None:
         lgd_kw = {'location': 'right',
                   'pad': -0.02,
@@ -192,16 +200,16 @@ def plot_us_map_heatmap(zones, plot_col, lgd_label, lgd=False, ax=None, lgd_kw=N
     alaska = zones[zones['State'] == 'Alaska']
     hawaii = zones[zones['State'] == 'Hawaii']
 
-    cont.plot(ax=continental_ax, column=plot_col, cmap=cmap,
+    cont.plot(ax=continental_ax, column=plot_col, cmap=cmap, norm=norm,
               antialiased=False,
               vmin=vmin, vmax=vmax,
               legend=lgd,
               legend_kwds=lgd_kw,
               )
-    alaska.plot(ax=alaska_ax, column=plot_col, cmap=cmap,
+    alaska.plot(ax=alaska_ax, column=plot_col, cmap=cmap, norm=norm,
                 edgecolor='face', lw=0, antialiased=False,
                 vmin=vmin, vmax=vmax)
-    hawaii.plot(ax=hawaii_ax, column=plot_col, cmap=cmap,
+    hawaii.plot(ax=hawaii_ax, column=plot_col, cmap=cmap, norm=norm,
                 edgecolor='face', lw=0, antialiased=False,
                 vmin=vmin, vmax=vmax)
 
@@ -341,6 +349,51 @@ annual_comfort_metrics = {
         'Heating Setpoint Unmet Occupied Degree-Hours [°C·hr]': '12'}
 }
 
+annual_comfort_metrics_lite = {'Very-cold Exceedance OccupantHours [hr]': '0',
+                               'Cool Exceedance OccupantHours [hr]': '1',
+                               'Warm Exceedance OccupantHours [hr]': '2',
+                               'Very-hot Exceedance OccupantHours [hr]': '3',
+                               'Time Setpoint Not Met During Occupied Heating': '4',
+                               'Time Setpoint Not Met During Occupied Cooling': '5',
+                               'Safe (≤ 26.7°C) [hr]': '6',
+                               'Caution (> 26.7°C, ≤ 32.2°C) [hr]': '7',
+                               'Extreme Caution (> 32.2°C, ≤ 39.4°C) [hr]': '8',
+                               'Danger (> 39.4°C, ≤ 51.7°C) [hr]': '9',
+                               'Extreme Danger (> 51.7°C) [hr]': '10',
+                               'Cooling Setpoint Unmet Occupied Degree-Hours [°C·hr]': '11',
+                               'Heating Setpoint Unmet Occupied Degree-Hours [°C·hr]': '12'}
+
+all_kpi = {'Very-cold Exceedance OccupantHours [hr]': '0',
+           'Cool Exceedance OccupantHours [hr]': '1',
+           'Warm Exceedance OccupantHours [hr]': '2',
+           'Very-hot Exceedance OccupantHours [hr]': '3',
+           'Time Setpoint Not Met During Occupied Heating': '4',
+           'Time Setpoint Not Met During Occupied Cooling': '5',
+           'Safe (≤ 26.7°C) [hr]': '6',
+           'Caution (> 26.7°C, ≤ 32.2°C) [hr]': '7',
+           'Extreme Caution (> 32.2°C, ≤ 39.4°C) [hr]': '8',
+           'Danger (> 39.4°C, ≤ 51.7°C) [hr]': '9',
+           'Extreme Danger (> 51.7°C) [hr]': '10',
+           'Cooling Setpoint Unmet Occupied Degree-Hours [°C·hr]': '11',
+           'Heating Setpoint Unmet Occupied Degree-Hours [°C·hr]': '12',
+           'hs_el_kwh': '13',
+           'hs_ng_kwh': '14',
+           'cs_el_kwh': '15',
+           'fan_el_kwh': '16',
+           'fac_ng_kwh': '17',
+           'fac_el_kwh': '18',
+           'geff_irrad_kwh': '19',
+           'cell_temp_degc': '20',
+           'pv_yield_kwh': '21',
+           'fac_el_net_kwh': '22',
+           'pv_consumed_kwh': '23',
+           'pv_excess_kwh': '24',
+           'self_suff_pct': '25',
+           'self_consume_pct': '26',
+           'op_em_kgco2': '27',
+           'op_em_pv_kgco2': '28',
+           'mit_pot_kgco2': '29'}
+
 code_names = {'0': 'vintage',
               '1': 'climate_zone',
               '2': 'scenario',
@@ -359,3 +412,26 @@ def expand_code_idx_to_df(df, all_dict, code_names):
                                                                     x)).str.split("_",
                                                                                   expand=True).rename(columns=dict_key_to_int(code_names))
     return df_cols
+
+
+def get_kpi_descriptions():
+    with open(os.path.join('input_data', 'kpi_descriptions.json'), 'r') as json_file:
+        data = json.load(json_file)
+    return data
+
+
+def filter_delta_df(all_dict, df, vintage, cz, scen_year, bldg_type):
+    code = compile_sim_code(all_dict, vintage, cz, scen_year, bldg_type)
+    return df.loc[code]
+
+
+def combine_result_to_zones(all_dict, code_names, zones, delta_df, col, vintage, scen_year, bldg_type):
+    match_codes = []
+    for cz in get_cz_list():
+        match_codes.append(compile_sim_code(all_dict, vintage, cz, scen_year, bldg_type))
+    result = delta_df[[col]].loc[match_codes]
+    result = result.join(expand_code_idx_to_df(result, all_dict, code_names))
+    result = result.set_index('climate_zone')
+    data_dict = result[col].to_dict()
+    new_series = zones['climate_zone'].map(data_dict)
+    return new_series
